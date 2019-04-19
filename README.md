@@ -1,3 +1,15 @@
-Linda Kladivová 155yfsg letní semestr 2019
+Linda Kladivová 
+summer course 155yfsg 2019
 
-Zadání: 
+Assignment:
+
+1.  Send a request in the XML form to CTI_OS service  (request)
+2.  Parse XML returned by CTI_OS service into desired parts which will later represent database table attributes (xml.etree.ElementTree)
+3.  Redesign code into OOP, design classes...
+4.  Store response to DB using SQL update statements (sqlite3)
+5.  Loop over defined IDs using select statement (sqlite3)
+6.  Add script parameters(argparse)
+
+Goal: ctios.py --username ja --password tajne --db Export_vse.vfk --num 40 
+
+
