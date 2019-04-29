@@ -68,17 +68,67 @@ def parse_CTI_OS_xml(CTI_OS_xml):
     return ( pOSIdent, osId, stavDat, datumVzniku, priznakKontext, rizeniIdVzniku, partnerBsm1, partnerBsm2, opsubType,
     charOsType, nazev, nazevU, datumVzniku2, rizeniIdVzniku2)
 
+def create_connection(db_file):
+    """ create a database connection to the SQLite database
+        specified by the db_file
+    :param db_file: database file
+    :return: Connection object or None
+    """
+    try:
+        conn = sqlite3.connect(db_file)
+        return conn
+    except Error as e:
+        print(e)
+    return None
+
+def update_Export_vse_db(db_file, pOSIdent, stavDat, datumVzniku, priznakKontext, rizeniIdVzniku, partnerBsm1, partnerBsm2, opsubType, charOsType, nazev, nazevU, datumVzniku2, rizeniIdVzniku2):
+    '''
+    Updates attributes for particular posident into one SQLITE3 table row
+    Keyword arguments: row attributes in a string format
+    Returns: failed! if problem appears otherwise None
+    '''
+
+    conn = create_connection(db_file)
+    conn.isolation_level = None
+
+    try:
+        cur = conn.cursor()
+        cur.execute("BEGIN TRANSACTION")
+        cur.execute(''' UPDATE OPSUB SET stav_dat = ? WHERE id = ?''',(stavDat, pOSIdent))
+        cur.execute(''' UPDATE OPSUB SET datum_vzniku = ? WHERE id = ?''',(datumVzniku, pOSIdent))
+        cur.execute(''' UPDATE OPSUB SET priznak_kontextu = ? WHERE id = ?''',(priznakKontext, pOSIdent))
+        cur.execute(''' UPDATE OPSUB SET rizeni_id_vzniku = ? WHERE id = ?''',(rizeniIdVzniku, pOSIdent))
+        cur.execute(''' UPDATE OPSUB SET ID_JE_1_PARTNER_BSM = ? WHERE id = ?''',(partnerBsm1, pOSIdent))
+        cur.execute(''' UPDATE OPSUB SET ID_JE_2_PARTNER_BSM = ? WHERE id = ?''',(partnerBsm2, pOSIdent))
+        cur.execute(''' UPDATE OPSUB SET OPSUB_TYPE = ? WHERE id = ?''',(opsubType, pOSIdent))
+        cur.execute(''' UPDATE OPSUB SET CHAROS_KOD = ? WHERE id = ?''',(charOsType, pOSIdent))
+        cur.execute(''' UPDATE OPSUB SET NAZEV = ? WHERE id = ?''',(nazev, pOSIdent))
+        cur.execute(''' UPDATE OPSUB SET NAZEV_U = ? WHERE id = ?''',(nazevU, pOSIdent))
+        cur.execute(''' UPDATE OPSUB SET DATUM_VZNIKU2 = ? WHERE id = ?''',(datumVzniku2, pOSIdent))
+        cur.execute(''' UPDATE OPSUB SET RIZENI_ID_VZNIKU2 = ? WHERE id = ?''',(rizeniIdVzniku2, pOSIdent))
+        cur.execute("COMMIT TRANSACTION")
+        cur.close()
+        conn.close()
+
+    except conn.Error:
+        print("failed!")
+        cur.execute("ROLLBACK TRANSACTION")
+        cur.close()
+        conn.close()
+    return None
+
 #################################################################################################################################################################################################
 
 username = 'WSTEST'
 password = 'WSHESLO'
-url = 'https://wsdptrial.cuzk.cz/trial/ws/ctios/2.8/ctios'
+url = 'https://wsdptrial.cuzk.cz/trial/ws/ctios/2.8/ctios' # access point to CTI_OS service
+db = 'd:/pluginy_QGIS/Export_vse.db' # database -- necessary to change the source file
 
 CTI_OS_xml = call_CTI_OS_service(username, password, url) # CTI_OS request with upper parameters
-print(CTI_OS_xml) #requested XML
+print(CTI_OS_xml) # requested XML
 
-(pOSIdent, osId, stavDat, datumVzniku, priznakKontext, rizeniIdVzniku, partnerBsm1, partnerBsm2, opsubType,
-    charOsType, nazev, nazevU, datumVzniku2, rizeniIdVzniku2) = parse_CTI_OS_xml(CTI_OS_xml) #parsing function
+# parsing of requested XML
+(pOSIdent, osId, stavDat, datumVzniku, priznakKontext, rizeniIdVzniku, partnerBsm1, partnerBsm2, opsubType, charOsType, nazev, nazevU, datumVzniku2, rizeniIdVzniku2) = parse_CTI_OS_xml(CTI_OS_xml)
 
 # printing of parsed attributes (count = 12)
 print("posident:{}".format(pOSIdent)) #superior
@@ -96,4 +146,11 @@ print("nazevU:{}".format(nazevU))
 print("datumVzniku2:{}".format(datumVzniku2))
 print("rizeniIdVzniku2:{}".format(rizeniIdVzniku2))
 
+# updating one row in the database by parsed attributes
+update_Export_vse_db(db, pOSIdent, stavDat, datumVzniku, priznakKontext, rizeniIdVzniku, partnerBsm1, partnerBsm2, opsubType, charOsType, nazev, nazevU, datumVzniku2, rizeniIdVzniku2)
 
+conn = create_connection(db)
+cur = conn.cursor()
+cur.execute("SELECT * FROM OPSUB where RIZENI_ID_VZNIKU2 is not null and RIZENI_ID_VZNIKU is not null")
+updated_row = cur.fetchone()
+print(updated_row) # controlling of the updated row
