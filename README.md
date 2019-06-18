@@ -1,70 +1,61 @@
-<<<<<<< HEAD
 N�zev: CTI_OS
-��el: Pos�l� po�adavek na slu�bu �TI OS na z�klad� pole posident� a ukl�d� odpov�d do SQLITE datab�ze
-Datum: �erven 2019
-Copyright: (C) 2019 Linda Kladivov�
+Ucel: Posila pozadavek na slu�bu CTI OS na zaklade pole posidentu a uklada odpoved do SQLITE databaze
+Datum: cerven 2019
+Copyright: (C) 2019 Linda Kladivova
 Email: l.kladivova@seznam.cz
-=======
-Název:        CTI_OS
-Účel:         Posílá požadavek na službu ČTI OS na základě pole posidentů 
-              a ukládá odpověd do SQLITE databáze
-Datum:        červen 2019
-Copyright:    (C) 2019 Linda Kladivová
-Email:        l.kladivova@seznam.cz
->>>>>>> 0012f31c0fbe6a4a49f9c684e301d32d9da7af2d
 
-Tento skript byl zpracován v rámci předmětu 155yfsg 2019 na fakultě stavební ČVUT.
-Není v konečné verzi, v budoucnu z něj bude vytvořena knihovna, která bude zakomponována do pluginu VFK v softwaru QGIS. 
-V případě dotazů, nejasností, či návrhů na vylepšení se obraťte na uvedenou emailovou adresu. 
+Tento skript byl zpracovan v ramci predmetu 155yfsg 2019 na fakulte stavebni CVUT.
+Neni v konecne verzi, v budoucnu z nej bude vytvorena knihovna, ktera bude zakomponovana do pluginu VFK v softwaru QGIS. 
+V pripade dotazu, nejasnosti, pri navrhach na vylepseni se obracejte na uvedenou emailovou adresu. 
 
 
-Návod ke skriptu
+Navod ke skriptu
 
-Pro správný chod skriptu je nutné si připravit několik souborů. 
-Zaprvé textový soubor s pseudonymizovanými oprávněnými subjekty s názvem posidents.txt. 
-Zadruhé soubor request.xml s přístupovým jménem a heslem do služby ČTI OS. 
-Zatřetí stáhnout si databázi Export_vse.db. 
-Vzorové ukázky souborů request.xml a posidents.txt jsou součástí projektu zde na GitHubu. 
-Aby skript fungoval správně, je nutné mít tyto 3 jmenované soubory ve stejném adresáři jako skript cti_os.py. 
+Pro spravny chod skriptu je nutno si pripravit nekolik souboru. 
+Zaprve textovy soubor s pseudonymizovanymi opravnenymi subjekty s nazvem posidents.txt. 
+Zadruhe soubor request.xml s pristupovym jmenem a heslem do sluzby CTI OS. 
+Zatreti stahnout si databazi Export_vse.db. 
+Vzorove ukazky souboru request.xml a posidents.txt jsou soucasti projektu zde na GitHubu. 
+Aby skript fungoval spravne, je nutno mit tyto 3 jmenovane soubory ve stejnem adresari jako skript cti_os.py. 
 
 
 Funkcionalita skriptu
 
-Vytvoří se LOG soubor (funkce create_log_file), do kterého se budou později 
-vypisovat chybné posidenty a statistiky o počtu správně zpracovaných posidentů 
-a o počtu konkrétních chyb: NEPLATNY IDENTIFIKATOR, EXPIROVANY IDENTIFIKATOR, 
-OPRAVNENY SUBJEKT NEEXISTUJE. LOG soubor se vytvoří ve stejném adresáři, 
-jako jsou všechny výše jmenované složky. 
+Vytvoren se LOG soubor (funkce create_log_file), do ktereho se budou pozdeji 
+vypisovat chybne posidenty a statistiky o poctu spravne zpracovanych posidentu
+a o poctu konkretnich chyb: NEPLATNY IDENTIFIKATOR, EXPIROVANY IDENTIFIKATOR, 
+OPRAVNENY SUBJEKT NEEXISTUJE. LOG soubor se vytvori ve stejnem adresari, 
+jako jsou vsechny vyse jmenovane soubory. 
 
-Dále se otevře se soubor s polem posidentů a zkontroluje se, že nemá žádné 
-duplicity, pokud ano odstraní se (funkce remove_duplicates). Pokud bude v poli 
-více než 100 posidentů, je dotaz na službu rozdělen do vícero dílčích dotazů. 
-Pokud je počet posidentů menší než 100, nic se nerozděluje. 
+Dale se otevre se soubor s polem posidentu a zkontroluje se, ze nema zadne
+duplicity, pokud ano odstrani se (funkce remove_duplicates). Pokud bude v poli 
+vice nez 100 posidentu, je dotaz na sluzbu rozdelen do vicero dalsich dotazu. 
+Pokud je pocet posidentu mensi nez 100, nic se nerozdeluje. 
 
-Vzhledem k tomu, že jména atributů v XML dokumentu v několika případech není 
-možné jednoduše převést na jména sloupců v databázi, bylo nutné pro tyto speciální
-případy definovat převodní slovník. 
+Vzhledem k tomu, ze jmena atributu v XML dokumentu v nekolika pripadech neni 
+mozne jednoduse prevest na jmena sloupcu v databazi, bylo nutne pro tyto specialni
+pripady definovat prevodni slovnik. 
 
-Podle pole posidentů se sestaví XML a to ve funkci draw_up_xml_request (max pro 100 
-posidentů). Vstupem do této funkce je cesta k souboru request.xml, do kterého se
-žádné posidenty nevyplňují. Další funkce call_service zavolá službu ČTI OS, 
-pošle jí toto XML a služba vrátí odpověd, která bude poměrně rozsáhlá - 
-velké XML, které bude obsahovat atributy k jednotlivým posidentům.  Je nutné, 
-aby HTTP status kód byl 2xx, což je ve funkci také kontrolováno. 
+Podle pole posidentu se sestavi XML a to ve funkci draw_up_xml_request (max pro 100 
+posidentu). Vstupem do teto funkce je cesta k souboru request.xml, do ktereho se
+zadne posidenty nevyplnuji. Dalsi funkce call_service zavola sluzbu CTI OS a 
+sluzba vrati odpoved, ktera bude pomerne rozsahla - velky XML soubor, ktery 
+bude obsahovat atributy k jednotlivym posidentum.  Je nutne, aby HTTP status 
+kod byl 2xx, coz je ve funkci take kontrolovano. 
 
-Dále byly vytvořeny dvě funkce na konverzi jmen atributů v XML dokumentu na názvy 
-sloupců v databázi. První funkce se zabývá jednodušším případem konverze, druhá 
-využívá speciální převodní slovník. V další funkci save_attributes_to_db se postupně 
-prochází všechny podatributy v atributu os a za pomoci funkce na konverzi jmen 
-se vkládají postupně všechny tyto podatributy do databáze. Hned na začátku for 
-cyklu je atribut os kontrolován, jestli neobsahuje podatribut chybaPOSIdent, 
-který může obsahovat hesla: NEPLATNY IDENTIFIKATOR, EXPIROVANY IDENTIFIKATOR, 
-OPRAVNENY SUBJEKT NEEXISTUJE. Pokud se chyba najde (posident vykazuje nějakou 
-z těchto chyb) tak to vypíše chybu s jedním z výše zmíněných hesel (podle 
-situace) do log souboru a zbytek for cyklu se přeskočí a jde se na další posident.
-V databázi se ještě vytvoří sloupeček OS_ID, do kterého se vloží podatribut osId.
-Takto se for cyklus vykoná postupně pro každý atribut os v XML souboru (tedy 
-tolikrát kolik je posidentů v poli). 
+Dale byly vytvoreny dve funkce na konverzi jmen atributu v XML dokumentu na nazvy 
+sloupcu v databazi. Prvni funkce se zabyva jednodussim pripadem konverze, druha 
+vyuziva specialni prevodni slovnik. V dalsi funkci save_attributes_to_db se postupne
+prochazi vsechny podatributy v atributu os a za pomoci funkce na konverzi jmen 
+se vkladaji postupne vsechny tyto podatributy do databaze. Hned na zacatku for 
+cyklu je atribut os kontrolovan, jestli neobsahuje podatribut chybaPOSIdent, 
+ktery muze obsahovat hesla: NEPLATNY IDENTIFIKATOR, EXPIROVANY IDENTIFIKATOR, 
+OPRAVNENY SUBJEKT NEEXISTUJE. Pokud se chyba najde (posident vykazuje nejakou 
+z techto chyb) tak to vypise chybu (podle situace) do log souboru a zbytek 
+for cyklu se preskoci a jde se na dalsi posident. V databazi se jeste vytvori
+sloupecek OS_ID, do ktereho se vlozi podatribut osId. Takto se for cyklus 
+vykona postupne pro kazdy atribut os v XML souboru (tedy tolikrat kolik je 
+posidentu v poli). 
 
 
 
