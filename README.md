@@ -1,8 +1,8 @@
-Název:        CTI_OS
-Úèel:         Posílá požadavek na službu ÈTI OS na základì pole posidentù a ukládá odpovìd do SQLITE databáze
-Datum:        èerven 2019
-Copyright:    (C) 2019 Linda Kladivová
-Email:        l.kladivova@seznam.cz
+Název: CTI_OS
+Úèel: Posílá požadavek na službu ÈTI OS na základì pole posidentù a ukládá odpovìd do SQLITE databáze
+Datum: èerven 2019
+Copyright: (C) 2019 Linda Kladivová
+Email: l.kladivova@seznam.cz
 
 Tento skript byl zpracován v rámci pøedmìtu 155yfsg 2019 na fakultì stavební ÈVUT.
 Není v koneèné verzi, v budoucnu z nìj bude vytvoøena knihovna, která bude zakomponována do pluginu VFK v softwaru QGIS. 
